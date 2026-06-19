@@ -6,10 +6,22 @@
         <field name="name">view.appointment.tree</field>
         <field name="model">appointment</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree   decoration-success="state == 'done'"
+                    decoration-warning="state == 'in_consultation'"
+                    decoration-info="state == 'draft'"
+                    decoration-danger="state == 'cancelled'" sample = "1" multi_edit = "1">
                 <field name="patient_id" string = "Patient"/>
+                <field name="gender" optional="hide"/>
+                <field name="ref" optional="hide"/>
+                <field name="doctor_id" widget="many2one_avatar_user"/>
                 <field name="appointment_time"/>
                 <field name="booking_date"/>
+                <field name="activity_ids" widget="list_activity"/>
+                <field name="state" widget="badge"
+                        decoration-success="state == 'done'"
+                        decoration-warning="state == 'in_consultation'"
+                        decoration-info="state == 'draft'"
+                        decoration-danger="state == 'cancelled'"/>
             </tree>
         </field>
     </record>
@@ -20,18 +32,47 @@
         <field name="model">appointment</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <field name = "state" nolabel = "1" widget = "statusbar" options = "{'clickable' : '1'}"/>
+                </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="priority" widget="priority" class="mr-3"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
                             <field name="patient_id" string="Patient"/>
+                            <field name="gender"/>
+                            <field name="ref"/>
+                            <field name="doctor_id" widget="many2one_avatar"/>
+                        </group>
+                        <group>
                             <field name="appointment_time"/>
-                            <field name="booking_date"/>
+                            <field name="booking_date" help="Date of Booking" default_focus = "1"/>
+                            <button name="action_test" string="Object Button" 
+                            help="A message will be print on the log."
+                            confirm="Are you sure to excute python code?"
+                            type="object" class="oe_highlight"/>
+                            <button name="%(hospital_management_system.action_patient)d" string="Action Button" 
+                            help="On clicking this butto, you will be redirected to patient record."
+                            confirm="Are you sure to open the patient action?"
+                            type="action" class="oe_highlight"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Prescription" name="prescription">
+                            <field name="prescription" placeholder="Enter Your Prescription" options="{'collaborative' : true, 'resizable' : true}"/>
+                        </page>
+                        <page string="Pharmacy" name="pharmacy">
+                        </page>
+                    </notebook>
                 </sheet>
                 <!-- Chatter -->
                 <div class="oe_chatter">
                     <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
                     <field name="message_ids"/>
                 </div>
             </form>
