@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <menuitem id = "hospital_root_menu"
+                name = "Hospital"
+                web_icon = "hospital_management_system,static/description/hospital_logo.png"
+                sequence = "0"/>
+
+    <menuitem id = "patient_detail_menu"
+                name = "Patient Detail"
+                parent = "hospital_root_menu"
+                sequence = "0"/>
+
+    <menuitem id = "appointments_menu"
+                name = "Appointments"
+                parent = "hospital_root_menu"
+                action="action_appointment"
+                sequence = "20"/>
+ 
+</odoo>

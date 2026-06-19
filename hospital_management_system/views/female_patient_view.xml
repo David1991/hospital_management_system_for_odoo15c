@@ -1,0 +1,23 @@
+<?xml version= "1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id = "action_female_patient" model = "ir.actions.act_window">
+        <field name = "name">Female Patient</field>
+        <field name = "type">ir.actions.act_window</field>
+        <field name = "res_model">patient</field>
+        <field name = "view_mode">tree,form</field>
+        <field name = "context">{'default_gender':'female', 'dafault_age':25}</field>
+        <field name = "domain">[('gender', '=', 'female')]</field>
+        <field name = "help" type = "html">
+            <p class = "o_view_nocontent_smiling_face">
+                Create your first Female Patient!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id = "female_patient_menu"
+                name = "Female Patient"
+                action = "action_female_patient"
+                parent = "patient_detail_menu"
+                sequence = "20"/>
+</odoo>
