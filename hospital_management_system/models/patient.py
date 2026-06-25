@@ -13,6 +13,8 @@ class Patient(models.Model):
     gender = fields.Selection([('male', 'Male'), ('female', 'Female')], string='Gender', tracking=True, default='female')
     active = fields.Boolean(string='Active', default=True)
     appointment_id = fields.Many2one(string='Appointment', comodel_name='appointment')
+    image = fields.Image(string = "Image")
+    tag_id = fields.Many2many("patient.tag", string = "Tag")
 
     # Computing for Age
     @api.depends('date_of_birth')

@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'product'],
 
     # always loaded
     'data': [
@@ -29,6 +29,7 @@
         'views/menu_view.xml',
         'views/female_patient_view.xml',
         'views/appointment_view.xml',
+        'views/patient_tag_view.xml',
         
         'views/views.xml',
         'views/templates.xml',

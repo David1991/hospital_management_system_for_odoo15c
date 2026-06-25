@@ -13,6 +13,7 @@
                 <field name="appointment_id"/>
                 <field name="age"/>
                 <field name="gender"/>
+                <field name="tag_id" widget = "many2many_tags" options="{'color_field': 'color'}"/>
             </tree>
         </field>
     </record>
@@ -24,6 +25,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <field name = "image" widget = "image" class = "oe_avatar"/>
                     <group>
                         <group>
                             <field name="name"/>
@@ -34,6 +36,7 @@
                         <group>
                             <field name="ref"/>
                             <field name="gender"/>
+                            <field name="tag_id" widget = "many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="active"/>
                         </group>
                     </group>

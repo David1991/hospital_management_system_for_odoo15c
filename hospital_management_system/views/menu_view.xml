@@ -16,5 +16,10 @@
                 parent = "hospital_root_menu"
                 action="action_appointment"
                 sequence = "20"/>
+
+    <menuitem id = "configuration_menu"
+                name = "Configuration"
+                parent = "hospital_root_menu"
+                sequence = "30"/>
  
 </odoo>

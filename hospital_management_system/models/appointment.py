@@ -24,6 +24,8 @@ class Appointment(models.Model):
         ('cancelled', 'Cancelled'),
     ], string='State', required=True, default='draft')
     doctor_id = fields.Many2one('res.users', string="Doctor")
+    pharmacy_line_id = fields.One2many("appointment.pharmacy.lines", "appointment_id", string="Pharmacy Lines")
+    hide_sale_price = fields.Boolean(string = "Hide Sale Price")
 
     @api.onchange('patient_id')
     def onchange_patient_id(self):
@@ -39,4 +41,28 @@ class Appointment(models.Model):
                 }
             }
     
+    def action_draft(self):
+        for rec in self:
+            rec.state = "draft"
+
+    def action_in_consultation(self):
+        for rec in self:
+            rec.state = "in_consultation"
+
+    def action_done(self):
+        for rec in self:
+            rec.state = "done"
+
+    def action_cancelled(self):
+        for rec in self:
+            rec.state = "cancelled"
     
+    # For Pharmacy Sheet
+class AppointmentPharmacyLines(models.Model):
+    _name = "appointment.pharmacy.lines"
+    _description = "Appointment Pharmacy Lines" 
+
+    product_id = fields.Many2one("product.product", required = True)
+    price = fields.Float(related = "product_id.list_price", string="Price")
+    qty = fields.Integer(string="Quantity", default = "1")
+    appointment_id = fields.Many2one("appointment", string = "Appointment")
