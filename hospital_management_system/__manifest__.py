@@ -30,6 +30,11 @@
         'views/female_patient_view.xml',
         'views/appointment_view.xml',
         'views/patient_tag_view.xml',
+
+        'wizard/cancel_appointment_view.xml',
+        'data/patient_tag_data.xml',
+        'data/patient.tag.csv',
+        'data/sequence_data.xml',
         
         'views/views.xml',
         'views/templates.xml',

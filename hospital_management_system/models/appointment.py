@@ -54,8 +54,8 @@ class Appointment(models.Model):
             rec.state = "done"
 
     def action_cancelled(self):
-        for rec in self:
-            rec.state = "cancelled"
+        action = self.env.ref('hospital_management_system.action_cancel_appointment').read()[0]
+        return action
     
     # For Pharmacy Sheet
 class AppointmentPharmacyLines(models.Model):

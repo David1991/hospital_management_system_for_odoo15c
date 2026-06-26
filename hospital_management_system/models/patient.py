@@ -16,6 +16,17 @@ class Patient(models.Model):
     image = fields.Image(string = "Image")
     tag_id = fields.Many2many("patient.tag", string = "Tag")
 
+    # Reference Value is change sequence number directly save in database
+    @api.model
+    def create(self, vals):
+        vals['ref'] = self.env['ir.sequence'].next_by_code('patient')
+        return super(Patient, self).create(vals)
+    
+    def write(self, vals):
+        if not self.ref and not vals.get('ref'):
+            vals['ref'] = self.env['ir.sequence'].next_by_code('patient')
+        return super(Patient, self).create(vals)
+
     # Computing for Age
     @api.depends('date_of_birth')
     def _compute_age(self):
