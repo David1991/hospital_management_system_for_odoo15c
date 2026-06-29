@@ -27,17 +27,32 @@
                 <sheet>
                     <field name = "image" widget = "image" class = "oe_avatar"/>
                     <group>
-                        <group>
-                            <field name="name"/>
+                        <div class = "oe_title">
+                            <h2>
+                                <field name="ref" readonly = "1"/>
+                            </h2>
+                            <h2>
+                                <label for = "name" string = "Name" class = "oe_edit_only"/>
+                                <field name="name"/>
+                            </h2>
+                        </div>
+                        <group>   
                             <field name="date_of_birth"/>
                             <field name="age"/>
-                            <field name="appointment_id"/>
+                            <field name="appointment_count"/>
+                            <!-- <field name="appointment_id"/> -->
                         </group>
                         <group>
-                            <field name="ref"/>
-                            <field name="gender"/>
+                            <field name="gender" invisible = "context.get('hide_gender')"/>
                             <field name="tag_id" widget = "many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="active"/>
+                        </group>
+                    </group>
+                    <group string = "Other Info" name = "other_info">
+                        <group>
+                            <field name = "parent" attrs = "{'invisible' : [('age', '&gt;=', 18)]}"/>
+                            <field name = "material_status" attrs = "{'invisible' : [('age', '&lt;=', 18)]}"/>
+                            <field name = "partner_name" attrs = "{'readonly' : [('material_status', '!=', 'married')], 'required' : [('material_status', '=', 'married')]}"/>
                         </group>
                     </group>
                 </sheet>

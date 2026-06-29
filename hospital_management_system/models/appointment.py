@@ -1,10 +1,12 @@
 from odoo import models,fields,api
+from odoo.exceptions import ValidationError
 
 class Appointment(models.Model):
     _name = "appointment"
     _description = "Appointment"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
+    sequence = fields.Char(tracking=True, readonly = True, default = "New")
     patient_id = fields.Many2one(string='Patient', comodel_name='patient')
     gender = fields.Selection(related='patient_id.gender', readonly=False)
     appointment_time = fields.Datetime(string='Appointment Time', default=fields.Datetime.now)
@@ -27,6 +29,16 @@ class Appointment(models.Model):
     pharmacy_line_id = fields.One2many("appointment.pharmacy.lines", "appointment_id", string="Pharmacy Lines")
     hide_sale_price = fields.Boolean(string = "Hide Sale Price")
 
+    @api.model
+    def create(self, vals):
+        vals['sequence'] = self.env['ir.sequence'].next_by_code('appointment')
+        return super(Appointment, self).create(vals)
+    
+    def unlink(self):
+        if self.state == "done":
+            raise ValidationError("You can't delete appointment with done state!")
+        return super(Appointment, self).unlink()
+    
     @api.onchange('patient_id')
     def onchange_patient_id(self):
         self.ref = self.patient_id.ref
@@ -47,7 +59,8 @@ class Appointment(models.Model):
 
     def action_in_consultation(self):
         for rec in self:
-            rec.state = "in_consultation"
+            if rec.state == "draft":
+                rec.state = "in_consultation"
 
     def action_done(self):
         for rec in self:

@@ -1,5 +1,6 @@
 from odoo import models,fields,api
 from datetime import date
+from odoo.exceptions import ValidationError
 
 class Patient(models.Model):
     _name = "patient"
@@ -15,6 +16,23 @@ class Patient(models.Model):
     appointment_id = fields.Many2one(string='Appointment', comodel_name='appointment')
     image = fields.Image(string = "Image")
     tag_id = fields.Many2many("patient.tag", string = "Tag")
+    appointment_count = fields.Integer(string = "Appointment Count", compute = '_compute_appointment_count', store = True)
+    appointment_ids = fields.One2many("appointment", 'patient_id', string = "Appointment")
+    parent = fields.Char(string = "Parent")
+    material_status = fields.Selection([('married', 'Married'), ('single', 'Single')], string = "Material Status", tracking = True)
+    partner_name = fields.Char(string = "Partner Name")
+
+    @api.depends('appointment_ids')
+    def _compute_appointment_count(self):
+        for rec in self:
+            rec.appointment_count = self.env['appointment'].search_count([('patient_id', '=', rec.id)])
+
+    # Checking the condition of Date of Birth
+    @api.constrains(date_of_birth)
+    def check_date_of_birth(self):
+        for rec in self:
+            if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
+                raise ValidationError("The entered date of birth is not acceptable!")
 
     # Reference Value is change sequence number directly save in database
     @api.model
