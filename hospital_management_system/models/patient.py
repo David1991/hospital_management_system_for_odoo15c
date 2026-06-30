@@ -1,22 +1,23 @@
 from odoo import models,fields,api
 from datetime import date
 from odoo.exceptions import ValidationError
+from dateutil import relativedelta
 
 class Patient(models.Model):
     _name = "patient"
     _description = "Patient"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char(string='Name', tracking=True)
+    name = fields.Char(string='Name', required=True, tracking=True)
     date_of_birth = fields.Date(string='Date of Birth')
     ref = fields.Char(string='Reference', tracking=True)
-    age = fields.Integer(string='Age', compute='_compute_age', tracking=True)
+    age = fields.Integer(string='Age', compute='_compute_age', inverse = '_inverse_compute_age', search = 'search_age', tracking=True)
     gender = fields.Selection([('male', 'Male'), ('female', 'Female')], string='Gender', tracking=True, default='female')
     active = fields.Boolean(string='Active', default=True)
     appointment_id = fields.Many2one(string='Appointment', comodel_name='appointment')
     image = fields.Image(string = "Image")
     tag_id = fields.Many2many("patient.tag", string = "Tag")
-    appointment_count = fields.Integer(string = "Appointment Count", compute = '_compute_appointment_count', store = True)
+    appointment_count = fields.Integer(string = "Appointment Count", compute = '_compute_appointment_count', store=True)
     appointment_ids = fields.One2many("appointment", 'patient_id', string = "Appointment")
     parent = fields.Char(string = "Parent")
     material_status = fields.Selection([('married', 'Married'), ('single', 'Single')], string = "Material Status", tracking = True)
@@ -28,7 +29,7 @@ class Patient(models.Model):
             rec.appointment_count = self.env['appointment'].search_count([('patient_id', '=', rec.id)])
 
     # Checking the condition of Date of Birth
-    @api.constrains(date_of_birth)
+    @api.constrains('date_of_birth')
     def check_date_of_birth(self):
         for rec in self:
             if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
@@ -43,7 +44,7 @@ class Patient(models.Model):
     def write(self, vals):
         if not self.ref and not vals.get('ref'):
             vals['ref'] = self.env['ir.sequence'].next_by_code('patient')
-        return super(Patient, self).create(vals)
+        return super(Patient, self).write(vals)
 
     # Computing for Age
     @api.depends('date_of_birth')
@@ -55,4 +56,25 @@ class Patient(models.Model):
             else:
                 rec.age = 1
 
+    # Computing the date_of_birth from age
+    @api.depends('age')
+    def _inverse_compute_age(self):
+        today = date.today()
+        for rec in self:
+            if rec.age >= 0:
+                rec.date_of_birth = today - relativedelta.relativedelta(years=rec.age)
+
+    # Search for age
+    def search_age(self, operator, value):
+        date_of_birth = date.today() - relativedelta.relativedelta(years=value)
+        print("date_of-birth", date_of_birth)
+        start_of_year = date_of_birth.replace(day=1,month=1)
+        end_of_year = date_of_birth.replace(day=31,month=12)
+        print("start ....", start_of_year)
+        print("end ....", end_of_year)
+        return [('date_of_birth', '>=', start_of_year), ('date_of_birth', '<=', end_of_year)]
+        
+    def action_test(self):
+        print("click!")
+        return
     

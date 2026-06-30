@@ -35,6 +35,7 @@
         'data/patient_tag_data.xml',
         'data/patient.tag.csv',
         'data/sequence_data.xml',
+        'views/res_config_setting_view.xml',
         
         'views/views.xml',
         'views/templates.xml',
